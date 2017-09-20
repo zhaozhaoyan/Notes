@@ -110,5 +110,157 @@ int main()
   return 0;
 }
 \end{minted}
+\part*{二、继承关系和复合关系}
+\section*{1.类之间的两种关系}
+\subsection*{(1)继承关系和复合关系}
+\subparagraph*{}
+1.继承：“是”关系。
+\subparagraph*{}
+基类A，B是基类A的派生类。
+\subparagraph*{}
+逻辑上要求：“一个B对象也是个A对象”。
+\subparagraph*{}
+2.复合：“有”关系。
+\subparagraph*{}
+类C中“有”成员变量k，k是类D的对象，则C和D是复合关系；
+\subparagraph*{}
+一般逻辑上要求：“D对象是C对象的固有属性或组成部分”。
+\subsection*{(2)继承关系的使用}
+\subparagraph*{}
+在设计两个有关系的类时，要注意，并非两个类有共同点，就可以让他们成为继承关系。让类A继承类B，必须满足“类B所代表的事物也是类A所代表的事物”，这个命题从逻辑上是成立的。
+\subparagraph*{}
+几何形体的绘图程序，点类和圆类，两者的关系是复合关系：
+\begin{minted}{c++}
+    class CCircle
+    {
+        CPoint center;//圆心
+        double radius;//半径
+    }
+\end{minted}
+\subsection*{(2)复合关系的使用}
+\subparagraph*{}
+写一个小区养狗管理程序，要有两个类，主人类和狗类：（注意不要循环定义：人中有狗，狗中有人）
+\subparagraph*{}
+正确的写法：是为狗类设一个主人类的指针成员变量，为主人类设一个狗类的对象数组。
+\begin{minted}{c++}
+    class CMaster;
+    class CDog
+    {
+        CMaster *pm;
+    };
+    class CMaster{
+    CDog *dogs[100];
+    };
+\end{minted}
+\part*{三、protected访问范围说明符}
+\paragraph*{}
+基类的private成员：可以被下列函数访问
+\subparagraph*{}
+1.基类的成员函数
+2.基类的友元函数
+\paragraph*{}
+基类的public成员：可以被下列函数访问
+\subparagraph*{}
+1.基类的成员函数
+2.基类的友元函数
+3.派生类的成员函数
+4.派生类的友元函数
+5.其他的函数
+\paragraph*{}
+基类的protected成员：可以被下列函数访问
+\subparagraph*{}
+1.基类的成员函数
+2.基类的友元函数
+3.派生类的成员函数可以访问当前对象的基类的保护成员
+\subparagraph*{}
+在基类中，一般都将需要隐藏的成员说明为保护成员而非私有成员。
+\part*{四、派生类的构造函数}
+\section*{派生类的构造函数}
+\subparagraph*{}
+1.派生类对象包含基类对象
+\subparagraph*{}
+2.执行派生类构造函数之前，先执行基类的构造函数
+\subparagraph*{}
+3.派生类交代基类初始化，具体形式：
+\begin{minted}{c++}
+    构造函数表（形参表）：基类名（基类构造函数实参表）
+    {
+          ......
+    }
+\end{minted}
+\subparagraph*{}
+4.派生类对象消亡时，先执行派生类的析构函数，再执行基类的析构函数
+\subparagraph*{}
+5.在创建派生类的对象时:
+\subparagraph*{}
+1）需要调用基类的构造函数：初始化派生类对象中从基类继承的成员
+\subparagraph*{}
+2）在执行一个派生类的构造函数之前，总是先执行基类的构造函数
+\subparagraph*{}
+6.调用基类构造函数的两种方式:
+\subparagraph*{}
+1）显示方式：派生类的构造函数中—>基类的构造函数提供参数
+\subparagraph*{}
+2）隐式方式：派生类的构造函数中，省略基类构造函数时，派生类的构造函数，自动调用基类的默认构造函数
+\subparagraph*{}
+派生类的析构函数被执行时，执行完派生类的析构函数后，自动调用基类的析构函数
+\section*{2.派生类的构造函数和析构函数调用顺序}
+\begin{minted}{c++}
+#include<iostream>
+using namespace std;
+class Base{
+ public:
+  int n;
+  Base(int i):n(i)
+  {
+    cout<<"Base "<<n<<" constructed"<<endl;//1
+  }
+  ~Base()
+  {
+    cout<<"Base "<<n<<" destructed"<<endl;//2
+  }
+};
+class Derived:public Base{//派生类构造函数
+ public:
+  Derived(int i):Base(i)//基类构造函数
+  {
+    cout<<"Derived constructed"<<endl;//4
+  }
+  ~Derived()//基类的析构函数
+  {
+    cout<<"Derived destructed"<<endl;//3
+  }
+};
+int main()
+{
+  Derived Obj(3);
+  return 0;
+}
+\end{minted}
+\subparagraph*{}
+1.创建派生类的对象时，执行派生类的构造函数之前：
+\subparagraph*{}
+1）调用基类的构造函数：初始化派生类对象中从基类继承的成员
+\subparagraph*{}
+2)调用成员对象类的构造函数：初始化派生类对象中的成员对象
+\subparagraph*{}
+2.执行完派生类的析构函数后：
+\subparagraph*{}
+1）调用成员对象类的析构函数
+\subparagraph*{}
+2）调用基类的函数
+\subparagraph*{}
+注意：析构函数的调用顺序与构造函数的调用顺序相反
+\part*{五、public继承的赋值兼容规则}
+\subparagraph*{}
+（1）派生类的对象可以赋值给基类对象；
+\subparagraph*{}
+（2）派生类的对象可以用来初始化基类引用；
+\subparagraph*{}
+（3）派生类对象的地址可以赋值给基类指针，亦即派生类的指针可以赋值给基类的指针。
+\subparagraph*{}
+以上三条反过来是不成立的。例如，不能把基类对象赋值给派生类对象。
+\subparagraph*{}
+在公有派生的情况下，可以说，派生类对象也是基类对象，任何本该出现基类对象的地方，如果出现的是派生类的对象，也是没有问题的。
 \end{CJK}
 \end{document}
