@@ -1,0 +1,114 @@
+\documentclass{article}  
+\usepackage{CJKutf8}
+\usepackage{minted}
+\begin{document} 
+\hfuzz=\maxdimen
+\tolerance=10000
+\hbadness=10000
+\begin{CJK}{UTF8}{gbsn}  
+\title{第五章  继承和派生}
+\author{}
+\date{}
+\maketitle
+\part*{一、继承和派生的概念}
+\section*{1.基本概念}
+\subsection*{(1)继承和派生}
+\subparagraph*{}
+继承：在定义一个新的类B时，如果该类与某个已有的类A相似（指的B拥有A的全部特点），那么就可以把A作为一个基类，而把B作为基类的一个派生类（也称子类）。
+\subparagraph*{}
+派生类是通过对基类进行修改和扩充得到的。在派生类中，可以扩充新的成员变量和成员函数。
+\subparagraph*{}
+派生类一经定义后，可以独立使用，不依赖于基类。
+\subparagraph*{}
+派生类拥有基类的全部成员函数和成员变量，不论是private，protected，public。
+\subparagraph*{}
+1）在派生类的各个成员函数中，不能访问基类中的private成员。
+\subparagraph*{}
+2）学籍管理程序：学号、姓名、性别、成绩为共同属性；是否该留级，是否该奖励为共同方法（成员函数）；大学生，研究生，导师等为不同的属性和方法等
+\subsection*{(2)派生类的写法}
+\begin{minted}{c++}
+    class 派生类名：public 基类名
+    {
+        ......
+        
+    };
+\end{minted}
+\subsection*{(3)派生类对象的内存空间}
+\subparagraph*{}
+派生类对象的体积，等于基类对象的体积，再加上派生类对象自己的成员变量的体积。在派生类对象中，包含着基类对象，而且基类对象的存储位置位于派生类对象新增的成员变量之前。
+\begin{minted}{c++}
+    class CBase
+    {
+        int v1,v2;  
+    };
+    class CDerived:public CBase
+    {
+        int v3;
+    }
+\end{minted}
+\section*{2.程序实例}
+下面看一个有两个类的简单学生管理程序：
+\begin{minted}{c++}
+#include<iostream>
+#include<string>
+using namespace std;
+class CStudent
+{
+private:
+  string name;
+  string id;
+  char gender;
+  int age;
+public:
+  void PrintInfo();
+  void SetInfo(const string&name_,const string & id_,int age_,char gender_);
+  string GetName(){return name;}
+};
+class CUndergraduateStudent:public CStudent
+{
+private:
+  string department;
+public:
+  void QualifiedForBaoyan(){
+    cout<<"qualified for baoyan"<<endl;
+  }
+void PrintInfo() {
+  CStudent::PrintInfo();
+  cout<<"Department:"<<department<<endl;
+}
+void SetInfo(const string&name_,const string & id_,int age_,char gender_,const string&department_)
+{
+   CStudent::SetInfo(name_,id_,age_,gender_);
+   department=department_;
+}
+};
+void CStudent::PrintInfo()
+{
+  cout<<"Name:"<<name<<endl;
+  cout<<"ID:"<<id<<endl;
+  cout<<"Age:"<<age<<endl;
+  cout<<"Gender:"<<gender<<endl;
+}
+void CStudent::SetInfo(const string&name_,const string & id_,int age_,char gender_)
+{
+  name=name_;
+  id=id_;
+  age=age_;
+  gender=gender_;
+}
+int main()
+{
+  CStudent s1;
+  CUndergraduateStudent s2;
+  s2.SetInfo("Harry Potter","118829212",19,'M',"Computer Science");
+  cout<<s2.GetName()<<endl;
+  s2.QualifiedForBaoyan();
+  s2.PrintInfo();
+  cout<<"sizeof(string)="<<sizeof(string)<<endl;
+  cout<<"sizeof(CStudent)="<<sizeof(CStudent)<<endl;
+  cout<<"sizeof(CUndergraduateStudent)="<<sizeof(CUndergraduateStudent)<<endl;
+  return 0;
+}
+\end{minted}
+\end{CJK}
+\end{document}
